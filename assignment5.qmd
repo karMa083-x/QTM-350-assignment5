@@ -1,0 +1,107 @@
+---
+title: "Assignment-05"
+author: "Stan Xu"
+date: "2026-02-25"
+format:
+  html:
+    toc: true
+    code-fold: true
+  pdf:
+    documentclass: article
+bibliography: references.bib
+---
+
+## 2
+
+```{r}
+#| label: load-packages
+library(knitr)
+library(tidyverse)
+wdi <- read.csv('wdi.csv')
+```
+
+## 3
+
+```{r}
+#| label: eda-summary
+#| echo: true
+
+# Summary of selected indicators
+wdi %>%
+  select(gdp_per_capita, inflation_rate, life_expectancy) %>%
+  summary()
+```
+
+## 3,4
+
+##### GDP growth rate
+
+
+## 4
+
+#### Relationship between GDP per Capita and Life Expectancy
+
+```{r}
+#| label: fig-gdp-life
+#| fig-cap: "Relationship between GDP per Capita and Life Expectancy.(Source:WDI, 2022)"
+#| echo: false
+
+ggplot(wdi, aes(x = gdp_per_capita, y = life_expectancy)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  theme_minimal() +
+  labs(
+    title = "GDP per Capita vs. Life Expectancy (2022)",
+    x = "GDP per Capita (USD)",
+    y = "Life Expectancy (Years)"
+  )
+```
+Findings: The scatter plot shows a clear positive relationship between GDP per capita and life expectancy in 2022. Countries with higher GDP per capita generally have higher life expectancy. The upward-sloping regression line indicates that as income increases, life expectancy tends to increase as well. However, the relationship appears to flatten at higher income levels
+
+#### Education Expenditure (% GDP)
+
+```{r}
+#| label: fig-gdp
+#| fig-cap: "Distribution of GDP Growth Rate (Source:WDI, 2022)"
+
+ggplot(wdi, aes(x = gdp_growth_rate)) +
+  geom_histogram(fill = "steelblue", bins = 20) +
+  labs(
+    title = "Distribution of GDP Growth Rate",
+    x = "GDP Growth Rate (%)",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+The boxplot compares education expenditure as a share of GDP between high-growth and low-growth countries. It shows that both groups allocate a similar proportion of GDP to education, with medians around 3--5%.
+
+Findings: The histogram of GDP growth rates shows that most countries cluster around modest positive growth between approximately –5% and 10%. However, the distribution has small number of countries experiencing extremely high growth rates (above 20% and even near 60%) and a few cases of severe economic contraction (around –30%).
+
+
+
+#### 5
+```{r}
+#| label: tbl-key-stats
+#| tbl-cap: "Average Global Indicators for 2022"
+
+wdi_summary <- wdi %>%
+  summarise(
+    Avg_GDP_Capita = mean(gdp_per_capita, na.rm = TRUE),
+    Avg_GDP_Growth = mean(gdp_growth_rate, na.rm = TRUE),
+    Avg_Inflation = mean(inflation_rate, na.rm = TRUE),
+    Avg_Life_Exp = mean(life_expectancy, na.rm = TRUE)
+  )
+
+kable(wdi_summary, digits = 2)
+```
+
+
+#### 7
+The data for this analysis is sourced from the @worldbank2022. The second research by @rosling2011 shows that the historical gap between wealth and health outcomes is gradually closing as shown in @fig-gdp-life.
+
+
+
+
+
+
